@@ -2,7 +2,7 @@
 # -*-coding:utf-8-*-
 __author__ = '906514731@qq.com'
 
-# 轮训发送最新地震息到微信
+# 每天定时发送天气消息到微信
 import requests
 import redis
 from lightpush import lightpush
@@ -28,17 +28,17 @@ def parseData(client):
     li = JsonData.get("data")
     update = client.get('erath_id')
     serviseId = li[0].get("id")
-    id = long(serviseId)
+    id = int(serviseId)
     if update is None:
         client.set('erath_id', id)
         sendDataToWechat(li[0].get("location"),"震级："+str(li[0].get("magnitude"))+"\r\n发生时间："+str(li[0].get("earthquake_time")))
     else:
         localId = client.get('erath_id')
-        if localId < id:
+        if int(localId) < id:
             client.set('erath_id', id)
             sendDataToWechat(li[0].get("location"),"震级："+str(li[0].get("magnitude"))+"\r\n发生时间："+str(li[0].get("earthquake_time")))
         else:
-            print "暂无最新地震"
+            print ("暂无最新地震")
 
 
     client.connection_pool.disconnect();
